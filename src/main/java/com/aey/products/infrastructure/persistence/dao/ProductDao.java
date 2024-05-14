@@ -2,6 +2,7 @@ package com.aey.products.infrastructure.persistence.dao;
 
 import com.aey.products.domain.entity.Product;
 import com.aey.products.domain.repository.ProductRepository;
+import com.aey.products.infrastructure.persistence.model.ProductJpa;
 import com.aey.products.infrastructure.persistence.query.ProductQuery;
 import com.aey.products.infrastructure.persistence.repository.ProductJpaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -9,10 +10,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @ApplicationScoped
 public class ProductDao implements ProductRepository {
@@ -35,6 +33,7 @@ public class ProductDao implements ProductRepository {
         if (result.isEmpty()) {
             return new ArrayList<>();
         }
+
         return result.stream().map(r -> (
                 Product.builder()
                         .productId((UUID) r[0])
@@ -59,6 +58,13 @@ public class ProductDao implements ProductRepository {
                 .createNativeQuery(ProductQuery.COUNT_AVAILABLE_PRODUCTS)
                 .getSingleResult();
         return count.intValue();
+    }
+
+    @Override
+    public Optional<Product> findProductById(UUID productId) {
+        return productJpaRepository
+                .findById(productId)
+                .map(ProductJpa::toEntity);
     }
 
 }
