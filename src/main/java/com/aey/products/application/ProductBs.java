@@ -1,13 +1,18 @@
 package com.aey.products.application;
 
+import com.aey.products.domain.entity.Product;
 import com.aey.products.domain.repository.ProductRepository;
 import com.aey.products.domain.service.ProductService;
 import com.aey.products.infrastructure.rest.dto.PaginationProductDto;
 import com.aey.products.infrastructure.rest.dto.ProductDto;
+import common.errors.ErrorCode;
+import io.vavr.control.Either;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @ApplicationScoped
@@ -18,6 +23,8 @@ public class ProductBs implements ProductService {
 
     @Override
     public PaginationProductDto getAllProducts(Integer limit, Integer offset) {
+        limit = limit == null ? 10 : limit;
+        offset = offset == null ? 0 : offset;
         List<ProductDto> products = productRepository
                 .findAllProducts(limit, offset)
                 .stream()
@@ -32,5 +39,20 @@ public class ProductBs implements ProductService {
                 .products(products)
                 .page(page)
                 .build();
+    }
+
+    @Override
+    public Either<ErrorCode, ProductDto> getProductById(UUID productId) {
+        Optional<Product> product = productRepository.findProductById(productId);
+
+        if (product.isEmpty()) {
+            return Either.left(ErrorCode.NOT_FOUND);
+        }
+        if (product.get().getIsActive().equals(Boolean.FALSE)) {
+            return Either.left(ErrorCode.RESOURCE_NOT_AVAILABLE);
+        }
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
+        ProductDto productFound = product.map(ProductDto::fromEntity).get();
+        return Either.right(productFound);
     }
 }
