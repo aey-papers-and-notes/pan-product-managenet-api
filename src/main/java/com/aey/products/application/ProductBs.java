@@ -10,6 +10,8 @@ import io.vavr.control.Either;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,8 +53,27 @@ public class ProductBs implements ProductService {
         if (product.get().getIsActive().equals(Boolean.FALSE)) {
             return Either.left(ErrorCode.RESOURCE_NOT_AVAILABLE);
         }
+
         @SuppressWarnings("OptionalGetWithoutIsPresent")
         ProductDto productFound = product.map(ProductDto::fromEntity).get();
         return Either.right(productFound);
+    }
+
+    @Override
+    public Either<ErrorCode, ProductDto> disableProduct(UUID productId) {
+        Optional<Product> product = productRepository.findProductById(productId);
+
+        if (product.isEmpty()) {
+            return Either.left(ErrorCode.NOT_FOUND);
+        }
+        if (product.get().getIsActive().equals(Boolean.FALSE)) {
+            return Either.left(ErrorCode.RESOURCE_NOT_AVAILABLE);
+        }
+
+        Product productToDisable = product.get();
+        productToDisable.setIsActive(Boolean.FALSE);
+        productToDisable.setUpdatedAt(new Date());
+        productRepository.disableProduct(productToDisable);
+        return Either.right(ProductDto.fromEntity(productToDisable));
     }
 }
