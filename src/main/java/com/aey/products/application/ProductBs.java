@@ -53,6 +53,7 @@ public class ProductBs implements ProductService {
         if (product.get().getIsActive().equals(Boolean.FALSE)) {
             return Either.left(ErrorCode.RESOURCE_NOT_AVAILABLE);
         }
+
         @SuppressWarnings("OptionalGetWithoutIsPresent")
         ProductDto productFound = product.map(ProductDto::fromEntity).get();
         return Either.right(productFound);
@@ -77,5 +78,23 @@ public class ProductBs implements ProductService {
         return productCreated
                 .<Either<ErrorCode, ProductDto>>map(p -> Either.right(ProductDto.fromEntity(p)))
                 .orElseGet(() -> Either.left(ErrorCode.ERROR_TO_CREATE));
+    }
+
+    @Override
+    public Either<ErrorCode, ProductDto> disableProduct(UUID productId) {
+        Optional<Product> product = productRepository.findProductById(productId);
+
+        if (product.isEmpty()) {
+            return Either.left(ErrorCode.NOT_FOUND);
+        }
+        if (product.get().getIsActive().equals(Boolean.FALSE)) {
+            return Either.left(ErrorCode.RESOURCE_NOT_AVAILABLE);
+        }
+
+        Product productToDisable = product.get();
+        productToDisable.setIsActive(Boolean.FALSE);
+        productToDisable.setUpdatedAt(new Date());
+        productRepository.disableProduct(productToDisable);
+        return Either.right(ProductDto.fromEntity(productToDisable));
     }
 }

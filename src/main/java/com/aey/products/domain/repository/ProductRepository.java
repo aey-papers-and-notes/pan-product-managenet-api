@@ -11,4 +11,5 @@ public interface ProductRepository {
     Integer countAllAvailableProducts();
     Optional<Product> findProductById(UUID productId);
     Optional<Product> createProduct(Product product);
+    void disableProduct(Product product);
 }

@@ -12,4 +12,5 @@ public interface ProductService {
     PaginationProductDto getAllProducts(Integer limit, Integer offset);
     Either<ErrorCode, ProductDto> getProductById(UUID productId);
     Either<ErrorCode, ProductDto> createProduct(CreateProductDto createProductDto);
+    Either<ErrorCode, ProductDto> disableProduct(UUID productId);
 }

@@ -72,5 +72,11 @@ public class ProductDao implements ProductRepository {
         return Optional.of(productJpaRepository.saveAndFlush(ProductJpa.fromEntity(product)).toEntity());
     }
 
+    @Override
+    public void disableProduct(Product product) {
+        productJpaRepository.save(ProductJpa.fromEntity(product));
+        productJpaRepository.flush();
+    }
+
 }
 
