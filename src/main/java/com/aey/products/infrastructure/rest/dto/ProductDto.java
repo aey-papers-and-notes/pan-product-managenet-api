@@ -40,6 +40,9 @@ public class ProductDto {
     private Date updatedAt;
 
     @JsonProperty
+    private Boolean isActive;
+
+    @JsonProperty
     private Integer category; // Convert to Entity in db
 
     @JsonProperty
@@ -59,6 +62,7 @@ public class ProductDto {
                 .imageUrl(product.getImageUrl())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
+                .isActive(product.getIsActive())
                 .category(product.getCategory())
                 .brand(product.getBrand())
                 .tag(product.getTag())
@@ -75,6 +79,7 @@ public class ProductDto {
                 .imageUrl(imageUrl)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
+                .isActive(isActive)
                 .category(category)
                 .brand(brand)
                 .tag(tag)

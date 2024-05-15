@@ -1,46 +1,63 @@
-package com.aey.products.domain.entity;
+package com.aey.products.infrastructure.rest.dto;
 
-import com.aey.products.infrastructure.persistence.model.ProductJpa;
-import com.aey.products.infrastructure.rest.dto.ProductDto;
+import com.aey.products.domain.entity.Product;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Product {
-    private UUID productId;
+public class CreateProductDto {
+
+    @JsonProperty
     private String name;
+
+    @JsonProperty
     private String description;
+
+    @JsonProperty
     private Integer stock;
+
+    @JsonProperty
     private BigDecimal price;
+
+    @JsonProperty
     private String imageUrl;
-    private Date createdAt;
-    private Date updatedAt;
-    private Boolean isActive;
+
+    @JsonProperty
     private Integer category; // Convert to Entity in db
+
+    @JsonProperty
     private Integer brand; // Convert to Entity in db
+
+    @JsonProperty
     private Integer tag; // Convert to Entity in db
 
-    public static Product fromEntity(ProductDto product) {
-        return Product.builder()
-                .productId(product.getProductId())
+
+    public static CreateProductDto fromEntity(Product product) {
+        return CreateProductDto.builder()
                 .name(product.getName())
                 .description(product.getDescription())
                 .stock(product.getStock())
                 .price(product.getPrice())
                 .imageUrl(product.getImageUrl())
-                .createdAt(product.getCreatedAt())
-                .updatedAt(product.getUpdatedAt())
-                .isActive(product.getIsActive())
                 .category(product.getCategory())
                 .brand(product.getBrand())
                 .tag(product.getTag())
+                .build();
+    }
+
+    public Product toEntity() {
+        return Product.builder()
+                .name(name)
+                .description(description)
+                .stock(stock)
+                .price(price)
+                .imageUrl(imageUrl)
                 .build();
     }
 }
