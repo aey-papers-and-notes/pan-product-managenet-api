@@ -67,5 +67,10 @@ public class ProductDao implements ProductRepository {
                 .map(ProductJpa::toEntity);
     }
 
+    @Override
+    public Optional<Product> createProduct(Product product) {
+        return Optional.of(productJpaRepository.saveAndFlush(ProductJpa.fromEntity(product)).toEntity());
+    }
+
 }
 

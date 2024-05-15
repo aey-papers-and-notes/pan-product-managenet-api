@@ -3,6 +3,7 @@ package com.aey.products.application;
 import com.aey.products.domain.entity.Product;
 import com.aey.products.domain.repository.ProductRepository;
 import com.aey.products.domain.service.ProductService;
+import com.aey.products.infrastructure.rest.dto.CreateProductDto;
 import com.aey.products.infrastructure.rest.dto.PaginationProductDto;
 import com.aey.products.infrastructure.rest.dto.ProductDto;
 import common.errors.ErrorCode;
@@ -10,6 +11,7 @@ import io.vavr.control.Either;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,5 +56,26 @@ public class ProductBs implements ProductService {
         @SuppressWarnings("OptionalGetWithoutIsPresent")
         ProductDto productFound = product.map(ProductDto::fromEntity).get();
         return Either.right(productFound);
+    }
+
+    @Override
+    public Either<ErrorCode, ProductDto> createProduct(CreateProductDto createProductDto) {
+        Product product = Product.builder()
+                .name(createProductDto.getName())
+                .description(createProductDto.getDescription())
+                .stock(createProductDto.getStock())
+                .price(createProductDto.getPrice())
+                .imageUrl(createProductDto.getImageUrl())
+                .createdAt(new Date())
+                .updatedAt(new Date())
+                .isActive(Boolean.TRUE)
+                .category(createProductDto.getCategory())
+                .brand(createProductDto.getBrand())
+                .tag(createProductDto.getTag())
+                .build();
+        Optional<Product> productCreated = productRepository.createProduct(product);
+        return productCreated
+                .<Either<ErrorCode, ProductDto>>map(p -> Either.right(ProductDto.fromEntity(p)))
+                .orElseGet(() -> Either.left(ErrorCode.ERROR_TO_CREATE));
     }
 }
