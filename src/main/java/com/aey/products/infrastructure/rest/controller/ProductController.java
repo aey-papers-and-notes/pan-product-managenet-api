@@ -33,4 +33,14 @@ public class ProductController {
                 .getOrElseGet(ErrorMapper::toResponse)
                 .build();
     }
+
+    @PATCH()
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response disableProduct(@PathParam("id") UUID id) {
+        return productService.disableProduct(id)
+                .map(Response::ok)
+                .getOrElseGet(ErrorMapper::toResponse)
+                .build();
+    }
 }
